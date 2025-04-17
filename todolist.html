@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo Pure JS</title>
+  </head>
+
+  <style>
+    body {
+      background-color: #0d0d0d;
+      font-family: 'Orbitron', sans-serif;
+      color: #00ffcc;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-self: center;
+      transform:scale(1.);
+    }
+  #app{
+    width: 50%;
+    height: auto;
+  }
+    h1 {
+      text-align: center;
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffff;
+      font-size: 2em;
+    }
+  
+    input[type="text"] {
+      background-color: #1a1a1a;
+      border: 1px solid #00ffcc;
+      color: #00ffcc;
+      padding: 10px;
+      font-size: 1em;
+      width: 80%;
+      margin-right: 10px;
+      border-radius: 5px;
+    }
+  
+    button {
+      background-color: transparent;
+      border: 1px solid #00ffcc;
+      color: #00ffcc;
+      padding: 8px 12px;
+      margin-left: 10px;
+      width: 80px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: 0.3s ease;
+      font-weight: bold;
+    }
+  
+    button:hover {
+      background-color: #00ffcc;
+      color: #0d0d0d;
+      box-shadow: 0 0 10px #00ffcc;
+    }
+  
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+  
+    li {
+      background-color: #1a1a1a;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-left: 5px solid #00ffcc;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 5px;
+      transition: 0.2s ease;
+    }
+  
+    li:hover {
+      background-color: #2a2a2a;
+    }
+  
+    li span {
+      flex-grow: 1;
+      font-size: 1.1em;
+    }
+  
+    input[type="checkbox"] {
+      accent-color: #00ffcc;
+      transform: scale(1.2);
+    }
+    </style>
+<link rel="stylesheet" href= "https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
+  <body>
+    <div id="app"></div>
+    <script>
+      //to store the tasks in array
+      let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      // To store the app div in variable
+      const app = document.getElementById("app");
+      //created new h1 element
+      const h1 = document.createElement("h2");
+      h1.textContent = "The Todo App";
+      //added H1 to the app div
+      app.appendChild(h1);
+      //created new input element
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = "enter your task...";
+      //added input to the app div
+      app.appendChild(input);
+
+      const btn = document.createElement("button");
+      //added the etxt in the button
+      btn.textContent = "Add";
+      //added btn to the app div
+      app.appendChild(btn);
+
+      // added the list of task which will be shown in the ui
+      const list = document.createElement("ul");
+      app.appendChild(list);
+      function savetasks() {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
+      }
+      function addtask() {
+        const text = input.value.trim();
+        if (text === "") return;
+        tasks.push({text:text , completed:false});
+        input.value = "";
+        savetasks();
+        rendertask();
+      }
+      function rendertask() {
+        list.innerHTML = "";
+        tasks.forEach((task, index) => {
+          // creating li element 
+          const li = document.createElement("li");
+          //creating input element checkbox
+          const checkbox= document.createElement("input")
+          checkbox.type="checkbox"
+          //if checkbox is checked is true
+          checkbox.checked=task.completed
+          //then change the task.completed to be true
+          
+          checkbox.addEventListener("change",()=>{
+            task.completed=checkbox.checked
+            //save it 
+            savetasks()
+            //then render it
+            rendertask()
+          })
+          //creating span tag
+          const span = document.createElement("span")
+          //text in span tag 
+          span.textContent=task.text
+          if(task.completed){
+            span.style.textDecoration="line-through"
+            span.style.color="gray"
+          } 
+          //checking the result of task
+          console.log(task)
+          //putting checkbox inside li
+          li.appendChild(checkbox)
+          //putting span inside li
+          li.appendChild(span)
+          // putting li inside list to be shown to the user
+          list.appendChild(li);
+
+          const delbtn = document.createElement("button");
+          delbtn.textContent = "delete";
+          delbtn.style.marginLeft = "10px";
+          delbtn.addEventListener("click", () => {
+            tasks.splice(index, 1);
+            savetasks();
+            rendertask();
+          });
+          li.appendChild(delbtn);
+        });
+      }
+      btn.addEventListener("click", () => {
+        addtask();
+      });
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") addtask();
+      });
+      const fontLink = document.createElement('link');
+fontLink.href = "https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap";
+fontLink.rel = "stylesheet";
+document.head.appendChild(fontLink);
+      rendertask();
+      
+    </script>
+  </body>
+</html>
